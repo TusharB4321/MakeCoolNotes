@@ -12,4 +12,4 @@ data class NoteModel(
     val content:String,
     val date:String,
     val color:Int=-1
-):Serializable
+):Serializable       //if we want to pass the entire object between the fragment then serializable used
