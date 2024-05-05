@@ -6,21 +6,24 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.makecoolnotes.adapters.NoteAdapter
 import com.example.makecoolnotes.databinding.FragmentNoteBinding
+import com.example.makecoolnotes.utils.SwipeToDelete
 import com.example.makecoolnotes.utils.hideKeyBoard
 import com.example.makecoolnotes.viewmodel.NoteViewModel
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialElevationScale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +82,8 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
         recyclerViewDisplay()
 
+        swipeToDelete(binding.rvNote)
+
         //Search
         binding.search.addTextChangedListener(object :TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -94,7 +99,7 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
                     if (query.isNotEmpty()){
                        viewmodel.searchNote(query).observe(viewLifecycleOwner){
-
+                           rvadapter.submitList(it)
                        }
                     }else{
                           observerDataChanges()
@@ -111,6 +116,15 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
         })
 
+        binding.search.setOnEditorActionListener { v, actionId,_ ->
+
+            if (actionId==EditorInfo.IME_ACTION_SEARCH){
+                v.clearFocus()
+                requireView().hideKeyBoard()
+            }
+            return@setOnEditorActionListener true
+        }
+
         binding.rvNote.setOnScrollChangeListener { view, scrollX, scrollY, i3, oldScrollY ->
 
             when{
@@ -126,6 +140,58 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
 
             }
         }
+    }
+
+    private fun swipeToDelete(rvNote: RecyclerView) {
+        val swipeTodelteCallBack=object :SwipeToDelete(){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position=viewHolder.adapterPosition
+                val note=rvadapter.currentList[position]
+                var actionButtonTap=false
+                viewmodel.deleteNote(note)
+                binding.search.apply {
+                    hideKeyBoard()
+                    clearFocus()
+                }
+                if (binding.search.text.toString().isEmpty()){
+                    observerDataChanges()
+                }
+                val snackBar=Snackbar.make(
+                    requireView(),"Note Deleted",Snackbar.LENGTH_LONG
+                ).addCallback(object :BaseTransientBottomBar.BaseCallback<Snackbar>(){
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        super.onDismissed(transientBottomBar, event)
+
+                    }
+
+                    override fun onShown(transientBottomBar: Snackbar?) {
+
+                        transientBottomBar?.setAction("UNDO"){
+                            viewmodel.saveNote(note)
+                            actionButtonTap=true
+                            binding.noData.isVisible=false
+                        }
+
+                        super.onShown(transientBottomBar)
+                    }
+                }).apply {
+                    animationMode=Snackbar.ANIMATION_MODE_FADE
+                    setAnchorView(R.id.add_note_fb)
+                }
+
+                snackBar.setActionTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.yellowOrange
+                    )
+                )
+                snackBar.show()
+            }
+
+        }
+
+        val itemTouchHelper=ItemTouchHelper(swipeTodelteCallBack)
+        itemTouchHelper.attachToRecyclerView(rvNote)
     }
 
     private fun observerDataChanges() {
