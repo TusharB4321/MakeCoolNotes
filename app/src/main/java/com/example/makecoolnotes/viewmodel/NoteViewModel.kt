@@ -23,10 +23,10 @@ class NoteViewModel(private val repository: NoteRepository):ViewModel() {
         repository.updateNote(note)
     }
 
-//    fun searchNote(query:String):LiveData<List<NoteModel>>{
-//        return repository.searchNote(query)
-//    }
-//
-//    fun getNotes():LiveData<List<NoteModel>> =repository.getAllNotes()
+    fun searchNote(query:String):LiveData<List<NoteModel>>{
+        return repository.searchNote(query)
+    }
+
+    fun getNotes():LiveData<List<NoteModel>> =repository.getAllNotes()
 
 }

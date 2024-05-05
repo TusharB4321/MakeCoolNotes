@@ -14,11 +14,11 @@ interface DaoInterface {
     @Update
     suspend fun updateNote(note:NoteModel)
 
-//    @Query("SELECT * FROM NoteModel ORDER BY id DESC")
-//    fun getAllNotes():LiveData<List<NoteModel>>
-//
-//    @Query("SELECT * FROM NoteModel WHERE title LIKE :query OR date LIKE:query ORDER BY id DESC")
-//    fun search(query:String):LiveData<List<NoteModel>>
+    @Query("SELECT * FROM NoteModel ORDER BY id DESC")
+    fun getAllNotes():LiveData<List<NoteModel>>
+
+    @Query("SELECT * FROM NoteModel WHERE title LIKE :query OR date LIKE :query ORDER BY id DESC")
+    fun search(query:String):LiveData<List<NoteModel>>
 
     @Delete
     suspend fun deleteNote(note:NoteModel)

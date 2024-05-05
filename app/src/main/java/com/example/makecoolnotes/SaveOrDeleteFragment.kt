@@ -39,7 +39,7 @@ class SaveOrDeleteFragment : Fragment(R.layout.fragment_save_or_delete) {
     private var note:NoteModel?=null
     private var color=-1
     private  val viewModel:NoteViewModel by activityViewModels()
-    private val currentDate=SimpleDateFormat.getDateInstance().format(Date())
+    private val currentDateTime=SimpleDateFormat("d MMM yyyy hh:mm:ss a", Locale.getDefault()).format(Date())
     private val job= CoroutineScope(Dispatchers.Main)
     private val args:SaveOrDeleteFragmentArgs by navArgs()
     private lateinit var result:String
@@ -145,14 +145,15 @@ class SaveOrDeleteFragment : Fragment(R.layout.fragment_save_or_delete) {
 
             note=args.note  // we check it is new note or updated note
 
+            Log.d("CheckError","Text is: ${binding.etTitle.text}")
             when(note) {
                 null -> {
                     viewModel.saveNote(
                         NoteModel(
                             0,
-                            binding.etTitle.toString(),
+                            binding.etTitle.text.toString(),
                             binding.etNoteContent.getMD(),
-                            date = currentDate,
+                            date = currentDateTime,
                             color
                         )
                     )
