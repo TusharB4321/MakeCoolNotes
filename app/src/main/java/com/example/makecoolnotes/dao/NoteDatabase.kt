@@ -14,8 +14,6 @@ import java.util.concurrent.locks.Lock
     exportSchema = false  //jab bhi hum update kre to data ude ni
 )
 abstract class NoteDatabase:RoomDatabase() {
-
-
     abstract fun getNoteDao():DaoInterface
     companion object{
 

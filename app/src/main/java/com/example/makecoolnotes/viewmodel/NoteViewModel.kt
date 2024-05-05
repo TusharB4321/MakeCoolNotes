@@ -3,7 +3,6 @@ package com.example.makecoolnotes.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.Query
 import com.example.makecoolnotes.model.NoteModel
 import com.example.makecoolnotes.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +23,10 @@ class NoteViewModel(private val repository: NoteRepository):ViewModel() {
         repository.updateNote(note)
     }
 
-    fun searchNote(query:String):LiveData<List<NoteModel>>{
-        return repository.searchNote(query)
-    }
-
-    fun getNotes():LiveData<List<NoteModel>> =repository.getAllNotes()
+//    fun searchNote(query:String):LiveData<List<NoteModel>>{
+//        return repository.searchNote(query)
+//    }
+//
+//    fun getNotes():LiveData<List<NoteModel>> =repository.getAllNotes()
 
 }

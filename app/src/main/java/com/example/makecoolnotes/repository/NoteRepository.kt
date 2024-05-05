@@ -6,9 +6,9 @@ import com.example.makecoolnotes.model.NoteModel
 
 class NoteRepository(private val db:NoteDatabase) {
 
-    fun getAllNotes()=db.getNoteDao().getAllNotes()
-
-    fun searchNote(query: String)=db.getNoteDao().search(query)
+//    fun getAllNotes()=db.getNoteDao().getAllNotes()
+//
+//    fun searchNote(query: String)=db.getNoteDao().search(query)
 
     suspend fun addNote(note:NoteModel)=db.getNoteDao().addNote(note)
 
